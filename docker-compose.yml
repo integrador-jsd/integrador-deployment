@@ -1,0 +1,33 @@
+version: '3' # specify docker-compose version
+# Define the services/containers to be run
+services:
+  backend: #name of the backend service
+    build: ./integrador-backend # specify the directory of the Dockerfile
+    ports:
+      - "8080:8080" #specify ports forewarding <<container:host>>
+    container_name: backend-container
+    restart: always
+    links:
+      - database # link this service to the database service
+    networks: 
+     - webappnetwork
+    depends_on: 
+      - database
+
+  database: # name of the database service
+    build: ./integrador-database # specify the directory of the Dockerfile
+    container_name: database-container
+    restart: always
+    ports:
+      - "3306:3306" #specify ports forewarding
+    networks: 
+     - webappnetwork
+    environment: 
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: integrador
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+
+networks: 
+  webappnetwork:
+    driver: bridge
